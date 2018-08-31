@@ -143,6 +143,8 @@ resource_registry:
   OS::TripleO::Services::NeutronL3Agent: puppet/services/neutron-l3.yaml
   OS::TripleO::Services::NeutronL2gwAgent: OS::Heat::None
   OS::TripleO::Services::NeutronLbaasv2Agent: OS::Heat::None
+  OS::TripleO::Services::NeutronVpnaasAgent: OS::Heat::None
+  OS::TripleO::Services::NeutronFwaasAgent: OS::Heat::None
   OS::TripleO::Services::NeutronMetadataAgent: puppet/services/neutron-metadata.yaml
   # FIXME(shardy) the duplicate NeutronServer line can be removed when we've updated
   # the multinode job ControllerServices after this patch merges
@@ -238,8 +240,6 @@ resource_registry:
   OS::TripleO::Services::ManilaBackendVMAX: OS::Heat::None
   OS::TripleO::Services::ManilaBackendCephFs: OS::Heat::None
   OS::TripleO::Services::ManilaBackendVNX: OS::Heat::None
-  # ManilaBackendGeneric is deprecated in Pike release
-  OS::TripleO::Services::ManilaBackendGeneric: OS::Heat::None
   OS::TripleO::Services::ComputeNeutronL3Agent: OS::Heat::None
   OS::TripleO::Services::ComputeNeutronMetadataAgent: OS::Heat::None
   OS::TripleO::Services::BarbicanApi: OS::Heat::None

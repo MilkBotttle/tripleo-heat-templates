@@ -9,12 +9,18 @@ parameters:
     description: The short name of the Cinder Backup backend to use.
     type: string
     constraints:
-    - allowed_values: ['swift', 'ceph']
-  CinderBackupRbdPoolName:
-    default: backups
+    - allowed_values: ['swift', 'ceph', 'tsm']
+  CinderBackupTSMVolumePrefix:
+    default: backup
+    description: Volume prefix for the backup id when backing up to TSM.
     type: string
-  CephClientUserName:
-    default: openstack
+  CinderBackupTSMPassword:
+    default: password
+    description: TSM password for the running username.
+    type: string
+  CinderBackupTSMComopression:
+    default: True
+    description: Enable or Disable compression for backups.
     type: string
   ServiceData:
     default: {}
@@ -67,9 +73,9 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [CinderBase, role_data, config_settings]
-          - cinder::backup::ceph::backup_ceph_user: {get_param: CephClientUserName}
-            cinder::backup::ceph::backup_ceph_pool: {get_param: CinderBackupRbdPoolName}
-            cinder::backup::swift::backup_swift_container: volumebackups
+          - cinder::backup::tsm::backup_tsm_volume_prefix: {get_param: CinderBackupTSMVolumePrefix}
+            cinder::backup::tsm::backup_tsm_password: {get_param: CinderBackupTSMPassword}
+            cinder::backup::tam::backup_tsm_compression: {get_param: CinderBackupTSMComopression}
       step_config:
         str_replace:
           template: "include ::tripleo::profile::base::cinder::backup::DRIVER"

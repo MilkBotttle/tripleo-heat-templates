@@ -439,6 +439,7 @@ resources:
       RoleParameters: {get_param: RoleParameters}
       ServiceNames: {get_param: ServiceNames}
       deployment_actions: {get_attr: [DeploymentActions, value]}
+      ControlPlaneIp: {get_attr: [{{server_resource_name}}, networks, ctlplane, 0]}
 
   NetworkDeployment:
     type: OS::TripleO::SoftwareDeployment

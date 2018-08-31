@@ -31,7 +31,7 @@ parameters:
                  via parameter_defaults in the resource registry.
     type: json
   TimeZone:
-    default: 'UTC'
+    default: 'Asia/Taipei'
     description: The timezone to be set on the overcloud.
     type: string
 

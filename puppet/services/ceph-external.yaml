@@ -27,9 +27,6 @@ parameters:
   GlanceRbdPoolName:
     default: images
     type: string
-  GnocchiRbdPoolName:
-    default: metrics
-    type: string
   NovaRbdPoolName:
     default: vms
     type: string
@@ -68,14 +65,10 @@ parameters:
                  image. Only applies to format 2 images. Set to '1' for Jewel
                  clients using older Ceph servers.
     type: string
-  ManilaCephFSNativeCephFSAuthId:
+  CinderRbdHDDPoolName:
     type: string
-    default: 'manila'
-  CephManilaClientKey:
-    default: ''
-    description: The Ceph client key. Can be created with ceph-authtool --gen-print-key.
+  CinderRbdSSDPoolName:
     type: string
-    hidden: true
 
 outputs:
   role_data:
@@ -95,30 +88,22 @@ outputs:
                 cap_mon: 'allow r'
                 cap_osd:
                   str_replace:
-                    template: 'allow class-read object_prefix rbd_children, allow rwx pool=CINDER_POOL, allow rwx pool=CINDERBACKUP_POOL, allow rwx pool=NOVA_POOL, allow rwx pool=GLANCE_POOL, allow rwx pool=GNOCCHI_POOL'
+                    template: 'allow class-read object_prefix rbd_children, allow rwx pool=CINDER_SSD_POOL, allow rwx pool=CINDER_HDD_POOL, allow rwx pool=CINDERBACKUP_POOL, allow rwx pool=NOVA_POOL, allow rwx pool=GLANCE_POOL'
                     params:
                       NOVA_POOL: {get_param: NovaRbdPoolName}
-                      CINDER_POOL: {get_param: CinderRbdPoolName}
-                      CINDERBACKUP_POOL: {get_param: CinderBackupRbdPoolName}
+                      CINDER_HDD_POOL: {get_param: CinderRbdHDDPoolName}
+                      CINDER_SSD_POOL: {get_param: CinderRbdSSDPoolName}
                       GLANCE_POOL: {get_param: GlanceRbdPoolName}
-                      GNOCCHI_POOL: {get_param: GnocchiRbdPoolName}
-              MANILA_CLIENT_KEY:
-                mode: '0644'
-                secret: {get_param: CephManilaClientKey}
-                cap_mon: 'allow r, allow command \"auth del\", allow command \"auth caps\", allow command \"auth get\", allow command \"auth get-or-create\"'
-                cap_mds: 'allow *'
-                cap_osd: 'allow rw'
             - keys:
                 CEPH_CLIENT_KEY:
                   list_join: ['.', ['client', {get_param: CephClientUserName}]]
-                MANILA_CLIENT_KEY:
-                  list_join: ['.', ['client', {get_param: ManilaCephFSNativeCephFSAuthId}]]
         ceph::profile::params::manage_repo: false
         # FIXME(gfidente): we should not have to list the packages explicitly in
         # the templates, but this should stay until the following is fixed:
         # https://bugs.launchpad.net/puppet-ceph/+bug/1629933
         ceph::params::packages:
           - ceph-base
+          - ceph-osd
           - ceph-mon
       step_config: |
         include ::tripleo::profile::base::ceph::client
